@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réglage du temps restant</title>
+</head>
+<body>
+    <h1>Réglage du temps restant</h1>
+
+    {% if timeleft %}
+        <pre>{{ timeleft }}</pre>
+    {% endif %}
+
+    <h2>Contrôle du temps</h2>
+
+    <!-- Formulaire de sélection d'utilisateur -->
+    <form action="{{ url_for('add_time') }}" method="post">
+        <label for="user-select">Pour l'utilisateur</label>
+        
+        <select id="user-select" name="selected_user">
+            {% for user in users %}
+                <option value="{{ user }}">{{ user }}</option>
+            {% endfor %}
+        </select>
+        ajouter
+        <select id="time-select" name="selected_time">
+            <option value="15">15</option>
+            <option value="30">30</option>
+            <option value="45">45</option>
+            <option value="60">60</option>
+        </select>
+        minutes
+        <button type="submit">Valider</button>
+    </form>
+
+
+
+</body>
+</html>
