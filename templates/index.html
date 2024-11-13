@@ -22,12 +22,15 @@
                 <option value="{{ user }}">{{ user }}</option>
             {% endfor %}
         </select>
-        ajouter
+        <select id="mode-select" name="selected_mode">
+            <option value="+">ajouter</option>
+            <option value="-">retirer</option>
+        </select>
         <select id="time-select" name="selected_time">
-            <option value="15">15</option>
-            <option value="30">30</option>
-            <option value="45">45</option>
-            <option value="60">60</option>
+            <option value=15>15</option>
+            <option value=30>30</option>
+            <option value=45>45</option>
+            <option value=60>60</option>
         </select>
         minutes
         <button type="submit">Valider</button>

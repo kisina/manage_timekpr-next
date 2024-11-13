@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import subprocess
 
 app = Flask(__name__)
@@ -55,14 +55,49 @@ def formater_duree(secondes):
 @app.route('/add_time', methods=['POST'])
 def add_time():
     selected_user = request.form.get('selected_user')
+    selected_mode = request.form.get('selected_mode')
+    selected_time = request.form.get('selected_time')
+    selected_time = 60 * int(selected_time) # Conversion en secondes
     # Traitez la valeur de selected_user ici, par exemple, en l'affichant ou en l'utilisant dans une commande.
     print("Utilisateur sélectionné:", selected_user)
 
-    command = f"sudo timekpra --settimeleft '{selected_user}' '+' 30"
+    command = f"sudo timekpra --settimeleft '{selected_user}' '{selected_mode}' {selected_time}"
     execute_command2(command)
 
     return redirect(url_for('index'))  # Redirige vers la page principale après traitement
 
 
+@app.route('/add_time_jeedom', methods=['GET'])
+def add_time_jeedom():
+    # Récupération des paramètres
+    selected_user = request.args.get('selected_user')
+    selected_mode = request.args.get('selected_mode')
+    selected_time = request.args.get('selected_time')
+    selected_time = 60 * int(selected_time) # Conversion en secondes
+
+    selected_mode = '+' if selected_mode == 'ajout' else '-'
+
+    # Vérification que tous les paramètres sont bien présents
+    if not all([selected_user, selected_mode, selected_time]):
+        return jsonify({"error": "Tous les paramètres sont requis"}), 400
+
+    # Action avec les paramètres - ici on affiche simplement les paramètres
+    command = f"sudo timekpra --settimeleft '{selected_user}' '{selected_mode}' {selected_time}"
+    execute_command2(command)
+    # Tu peux remplacer ce bloc par l'action que tu souhaites
+    result = {
+        "selected_user": selected_user,
+        "selected_mode": selected_mode,
+        "selected_time": selected_time,
+        "message": f"Action effectuée avec succès pour l'utilisateur {selected_user} en mode {selected_mode} à {selected_time}."
+    }
+
+    # Retourner le résultat en JSON
+    return jsonify(result), 200
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+
+# Exemple test API jeedom: http://127.0.0.1:5000/add_time_jeedom?selected_user=test_timekpr&selected_mode=ajout&selected_time=11
