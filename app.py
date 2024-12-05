@@ -32,6 +32,28 @@ def get_users():
 
     return list_users
 
+
+def formater_duree_simple(secondes):
+    heures = secondes // 3600
+    minutes = (secondes % 3600) // 60
+    secondes_restantes = secondes % 60
+    
+    resultat = f"{heures}h{minutes}min"
+    return resultat
+
+
+# Route pour obtenir la liste des utilisateurs et leur temps restant
+@app.route('/get_timeleft', methods=['GET'])
+def get_timeleft_route():
+    user = request.args.get('user')
+    print(user)
+    time_left = execute_command2(f"sudo timekpra --userinfo {user}")
+    userinfo = time_left.split("\n")[1:-1]
+    dictionnaire = {item.split(":")[0]: item.split(":")[1] for item in userinfo}
+    time_left = (dictionnaire['TIME_LEFT_DAY'])
+    return formater_duree_simple(int(time_left))
+
+
 # Route principale qui affiche la page avec le bouton
 @app.route('/', methods=['GET'])
 def index():
